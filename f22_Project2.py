@@ -1,3 +1,4 @@
+
 from xml.sax import parseString
 from bs4 import BeautifulSoup
 import re
@@ -25,7 +26,23 @@ def get_listings_from_search_results(html_file):
         ('Loft in Mission District', 210, '1944564'),  # example
     ]
     """
-    pass
+    filename = "mission_district_search_results.html"
+    with open("html_files/" + filename) as f:
+        soup = BeautifulSoup(f.read())
+
+    listings = soup.findAll('div', attrs = {"class": "c4mnd7m"})
+
+    data = list()
+    for li in listings:
+        link = li.find("a")
+        title_tag = link.get("aria-labelledby")
+        id_num = title_tag.split('_')[1]
+        text = li.find("div", attrs = {"id": title_tag}).text
+        text = (' '.join([i.replace(" ", '')for i in text.split("\n")]))[1:1]
+        price = li.find("span", attrs = {"class": "a8jt5op"}).text.split(' ')[0][1:]
+        price = int(price)
+        listing_data = (text, price, id_num)
+        data.append(listing_data)
 
 
 def get_listing_information(listing_id):
