@@ -180,8 +180,16 @@ def check_policy_numbers(data):
     ]
 
     """
+    pattern1 = re.compile("20\d\d-00\d\d\d\dSTR")
+    pattern2 = re.complie("STR-000\d\d\d\d")
 
+    not_a_match = list()
 
+    for listing in data:
+        policy = listing[3]
+        if not pattern1.match(policy) and not pattern2.match(policy):
+            not_a_match.append(data[2])
+    return not_a_match
 
 def extra_credit(listing_id):
     """
