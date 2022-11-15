@@ -26,23 +26,23 @@ def get_listings_from_search_results(html_file):
         ('Loft in Mission District', 210, '1944564'),  # example
     ]
     """
-    filename = "mission_district_search_results.html"
-    with open("html_files/" + filename) as f:
+    with open("html_files/" + html_file) as f:
         soup = BeautifulSoup(f.read())
 
-    listings = soup.findAll('div', attrs = {"class": "c4mnd7m"})
+    listings = soup.findAll('div', attrs={"class": "c4mnd7m"})
 
     data = list()
     for li in listings:
         link = li.find("a")
         title_tag = link.get("aria-labelledby")
         id_num = title_tag.split('_')[1]
-        text = li.find("div", attrs = {"id": title_tag}).text
-        text = (' '.join([i.replace(" ", '')for i in text.split("\n")]))[1:1]
-        price = li.find("span", attrs = {"class": "a8jt5op"}).text.split(' ')[0][1:]
+        text = li.find("div", attrs={"id": title_tag}).text
+        text = (' '.join([i.replace(" ", '') for i in text.split("\n")]))[1:-1]
+        price = li.find("span", attrs={"class": "a8jt5op"}).text.split(' ')[0][1:]
         price = int(price)
         listing_data = (text, price, id_num)
         data.append(listing_data)
+    return data
 
 
 def get_listing_information(listing_id):
@@ -69,8 +69,33 @@ def get_listing_information(listing_id):
         number of bedrooms
     )
     """
-    pass
+    html_file = f"listing_{listing_id}.html"
 
+    with open("html_files/" + html_file) as f:
+        soup = BeautifulSoup(f.read())
+    
+    ul = soup.find("ul", attrs={"class", "fhhmddr"})
+
+    pol_str = ul.findAll("li")[0].text
+    pol_str = [i.replace(" ", '') for i in pol_str.split("\n")][2]
+
+
+    subtitle = soup.find('h2').text
+
+    room_status = None
+
+    if "private" in subtitle:
+        room_status = "Private Room"
+    elif "shared" in subtitle:
+        room_status = "Shared Room"
+    else:
+        room_status = "Entire Room"
+
+    des_list = soup.find("ol")
+    bed_desc = des_list.findAll("li")[1].getText().replace(" ", "")[2]
+    bed_desc = int(bed_desc)
+
+    return (pol_str, room_status, bed_desc)
 
 def get_detailed_listing_database(html_file):
     """
@@ -86,7 +111,22 @@ def get_detailed_listing_database(html_file):
         ...
     ]
     """
-    pass
+    all_listings = get_listings_from_search_results(html_file)
+    data = list()
+
+    for li in all_listings:
+        id = li[2]
+        info = get_listing_information(id)
+        data.append((
+            li[0],
+            li[1],
+            id,
+            info[0],
+            info[1],
+            info[2]
+        ))
+
+    return data
 
 
 def write_csv(data, filename):
@@ -111,7 +151,7 @@ def write_csv(data, filename):
 
     This function should not return anything.
     """
-    pass
+
 
 
 def check_policy_numbers(data):
@@ -133,7 +173,7 @@ def check_policy_numbers(data):
     ]
 
     """
-    pass
+
 
 
 def extra_credit(listing_id):
