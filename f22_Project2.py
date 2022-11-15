@@ -151,8 +151,15 @@ def write_csv(data, filename):
 
     This function should not return anything.
     """
-
-
+    csv_data = "Listing Title,Cost,Listing ID,Policy Number,Place Type,Number of Bedrooms\n"
+    for listing in data:
+        for i in listing[:-1]:
+            csv_data += "i"
+            csv_data += ','
+        csv_data += listing[:-1]
+        csv_data += '\n'
+    with open(filename, 'w') as f:
+        f.write(csv_data)
 
 def check_policy_numbers(data):
     """
