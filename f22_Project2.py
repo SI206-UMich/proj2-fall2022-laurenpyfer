@@ -76,9 +76,9 @@ def get_listing_information(listing_id):
     
     ul = soup.find("ul", attrs={"class", "fhhmddr"})
 
-    pol_str = ul.findAll("li")[0].text
-    pol_str = [i.replace(" ", '') for i in pol_str.split("\n")][2]
-
+    polstr = ul.findAll("li")[0].text
+    polstr = [i.replace(" ", '') for i in polstr.split("\n")][0]
+    polstr = polstr.split(':')[1]
 
     subtitle = soup.find('h2').text
 
@@ -92,10 +92,11 @@ def get_listing_information(listing_id):
         room_status = "Entire Room"
 
     des_list = soup.find("ol")
-    bed_desc = des_list.findAll("li")[1].getText().replace(" ", "")[2]
-    bed_desc = int(bed_desc)
+    bed_desc = des_list.findAll("li")[1].getText().replace(" ", "")
+    i = bed_desc[1]
+    bed_desc = i
 
-    return (pol_str, room_status, bed_desc)
+    return (polstr, room_status, bed_desc)
 
 def get_detailed_listing_database(html_file):
     """
@@ -154,10 +155,10 @@ def write_csv(data, filename):
     csv_data = "Listing Title,Cost,Listing ID,Policy Number,Place Type,Number of Bedrooms\n"
     for listing in data:
         for i in listing[:-1]:
-            csv_data += "i"
+            csv_data += str(i)
             csv_data += ','
-        csv_data += listing[:-1]
         csv_data += '\n'
+        
     with open(filename, 'w') as f:
         f.write(csv_data)
 
