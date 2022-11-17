@@ -1,3 +1,7 @@
+# Your name: Lauren Pyfer
+# Your student id:4764 6746
+# Your email: lpyfer@umich.edu
+# List who you have worked with on this project: Devon Vitale
 
 from xml.sax import parseString
 from bs4 import BeautifulSoup
@@ -5,6 +9,7 @@ import re
 import os
 import csv
 import unittest
+
 
 
 def get_listings_from_search_results(html_file):
@@ -26,6 +31,7 @@ def get_listings_from_search_results(html_file):
         ('Loft in Mission District', 210, '1944564'),  # example
     ]
     """
+
     with open(html_file) as f:
         soup = BeautifulSoup(f.read())
 
@@ -61,8 +67,7 @@ def get_listing_information(listing_id):
                 "Private Room": the listing subtitle has the word "private" in it
                 "Shared Room": the listing subtitle has the word "shared" in it
                 "Entire Room": the listing subtitle has neither the word "private" nor "shared" in it
-        int - Number of bedrooms
-.
+        int - Number of bedrooms.
     (
         policy number,
         place type,
@@ -79,6 +84,7 @@ def get_listing_information(listing_id):
     polstr = ul.findAll("li")[0].text
     polstr = [i.replace(" ", '') for i in polstr.split("\n")][0]
     polstr = polstr.split(':')[1]
+
 
     subtitle = soup.find('h2').text
 
@@ -98,10 +104,11 @@ def get_listing_information(listing_id):
 
     return (polstr, room_status, bed_desc)
 
+
 def get_detailed_listing_database(html_file):
     """
     Write a function that calls the above two functions in order to return
-    the complete listing information using the functions you’ve created.
+    the complete listing information using the functions youve created.
     This function takes in a variable representing the location of the search results html file.
     The return value should be in this format:
 
@@ -112,7 +119,7 @@ def get_detailed_listing_database(html_file):
         ...
     ]
     """
-    all_listings = get_listings_from_search_results(html_file)
+    all = get_listings_from_search_results(html_file)
     data = list()
 
     for li in all:
@@ -235,7 +242,7 @@ class TestCases(unittest.TestCase):
                      "1550913",
                      "4616596",
                      "6600081"]
-         # call get_listing_information for i in html_list:
+        # call get_listing_information for i in html_list:
         listing_informations = [get_listing_information(id) for id in html_list]
         # check that the number of listing information is correct (5)
         self.assertEqual(len(listing_informations), 5)
@@ -255,6 +262,7 @@ class TestCases(unittest.TestCase):
         self.assertEqual(listing_information[-1][1], "Private Room")
         # check that the third listing has one bedroom
         self.assertEqual(listing_information[2][2], 1)
+
         pass
 
     def test_get_detailed_listing_database(self):
@@ -267,12 +275,13 @@ class TestCases(unittest.TestCase):
             # assert each item in the list of listings is a tuple
             self.assertEqual(type(item), tuple)
             # check that each tuple has a length of 6
+            self.assertEqual(len(item), 6)
 
         # check that the first tuple is made up of the following:
         # 'Loft in Mission District', 210, '1944564', '2022-004088STR', 'Entire Room', 1
         self.assertEqual(detailed_database[0],('Loft in Mission District', 210, '1944564', '2022-004088STR', 'Entire Room', 1))
         # check that the last tuple is made up of the following:
-       # 'Guest suite in Mission District', 238, '32871760', 'STR-0004707', 'Entire Room', 1
+        # 'Guest suite in Mission District', 238, '32871760', 'STR-0004707', 'Entire Room', 1
         self.assertEqual(detailed_database[-1],('Guest suite in Mission District', 238, '32871760', 'STR-0004707', 'Entire Room', 1))
         pass
 
@@ -298,16 +307,18 @@ class TestCases(unittest.TestCase):
         self.assertEqual(csv_lines[-1], "Apartment in Mission District,399,28668414,Pending,Entire Room,2")
         pass
 
+
     def test_check_policy_numbers(self):
         # call get_detailed_listing_database on "html_files/mission_district_search_results.html"
         # and save the result to a variable
         detailed_database = get_detailed_listing_database("html_files/mission_district_search_results.html")
-         # call check_policy_numbers on the variable created above and save the result as a variable
+        # call check_policy_numbers on the variable created above and save the result as a variable
         invalid_listings = check_policy_numbers(detailed_database)
         # check that the return value is a list
         self.assertEqual(type(invalid_listings), list)
         # check that there is exactly one element in the string
         self.assertEqual(len(invalid_listings), 1)
+
         # check that the element in the list is a string
         self.assertEqual(type(invalid_listings[0]), str)
         # check that the first element in the list is '16204265'
@@ -320,3 +331,4 @@ if __name__ == '__main__':
     write_csv(database, "airbnb_dataset.csv")
     check_policy_numbers(database)
     unittest.main(verbosity=2)
+
